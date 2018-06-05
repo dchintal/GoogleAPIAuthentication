@@ -4,9 +4,9 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Welcome</title>
+<title>Welcome2</title>
 </head>
 <body>
-<h4>Hi! Welcome to Home Page</h4>
+<h4>Hi! Welcome to second login page</h4>
 </body>
 </html>

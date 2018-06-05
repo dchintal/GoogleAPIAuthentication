@@ -23,7 +23,6 @@
   </script>
 </head>
   <body>
-  
    <h1> Google API Auth test </h1> <br/>
     <!-- Add where you want your sign-in button to render -->
 <!-- Use an image that follows the branding guidelines in a real app -->
@@ -47,7 +46,7 @@ function signInCallback(authResult) {
     // Send the code to the server
     $.ajax({
       type: 'POST',
-      url: 'http://localhost:8080/GoogleAPIAuthentication/LoginServlet?modeofAction=welcomePage',
+      url: 'http://localhost:8080/GoogleAPIAuthentication/LoginServlet?modeofAction=checkPrice',
       // Always include an `X-Requested-With` header in every AJAX request,
       // to protect against CSRF attacks.
       headers: {

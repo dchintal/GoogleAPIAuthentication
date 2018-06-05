@@ -1,7 +1,9 @@
+package com.optum.pic.test.authenticate;
+
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Enumeration;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -10,15 +12,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
-//import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
-//import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.services.drive.Drive;
-import com.google.api.services.drive.model.File;
 
 
 //import com.google.api.services.drive.Drive;
@@ -61,6 +58,9 @@ public class LoginServlet extends HttpServlet {
 			// console and specify them directly when you create the GoogleAuthorizationCodeTokenRequest
 			// object.
 		
+		    String modeofAction = request.getParameter("modeofAction");
+		   
+		    System.out.println("modeofAction: " + modeofAction);
 			String CLIENT_SECRET_FILE = this.getServletContext().getRealPath("/credentials.json");
 	
 			String authCode = request.getParameter("authCode"); 
@@ -90,15 +90,7 @@ public class LoginServlet extends HttpServlet {
 			response.setContentType("text/html");
 		    PrintWriter out = response.getWriter();
 		    
-			// Use access token to call API
-//			GoogleCredential credential = new GoogleCredential().setAccessToken(accessToken);
-//			Drive drive =
-//			    new Drive.Builder(new NetHttpTransport(), JacksonFactory.getDefaultInstance(), credential)
-//			        .setApplicationName("Auth Code Exchange Demo")
-//			        .build();
-//			File file = drive.files().get("appfolder").execute();
-
-			// Get profile info from ID token
+		    // Get profile info from ID token
 			GoogleIdToken idToken = tokenResponse.parseIdToken();
 			GoogleIdToken.Payload payload = idToken.getPayload();
 			
@@ -111,6 +103,9 @@ public class LoginServlet extends HttpServlet {
 			String familyName = (String) payload.get("family_name");
 			String givenName = (String) payload.get("given_name");
 			
+			System.out.println("payload: " + payload);
+			
+			
 			System.out.println("email: " + email);
 			System.out.println("emailVerified: " + emailVerified);
 			System.out.println("name: " + name);
@@ -118,7 +113,12 @@ public class LoginServlet extends HttpServlet {
 			System.out.println("locale: " + locale);
 			System.out.println("familyName: " + familyName);
 			System.out.println("givenName: " + givenName);
-		    out.println("http://localhost:8080/google_oauth_test/Welcome.jsp");
+			if(modeofAction.equals("checkPrice")) {
+				 out.println("http://localhost:8080/GoogleAPIAuthentication/Welcome2.jsp");
+			} else {
+				 out.println("http://localhost:8080/GoogleAPIAuthentication/Welcome.jsp");
+			}
+		   
 		    out.close();
 
 
