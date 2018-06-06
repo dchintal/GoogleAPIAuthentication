@@ -113,14 +113,9 @@ public class LoginServlet extends HttpServlet {
 			System.out.println("locale: " + locale);
 			System.out.println("familyName: " + familyName);
 			System.out.println("givenName: " + givenName);
-			if(modeofAction.equals("checkPrice")) {
-				 out.println("http://localhost:8080/GoogleAPIAuthentication/Welcome2.jsp");
-			} else {
-				 out.println("http://localhost:8080/GoogleAPIAuthentication/Welcome.jsp");
-			}
-		   
-		    out.close();
-
+			
+			out.write("/GoogleAPIAuthentication/helloWorld.do");
+			out.close();
 
 	}
 
