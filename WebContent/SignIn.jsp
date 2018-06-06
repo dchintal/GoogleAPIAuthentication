@@ -56,7 +56,7 @@ function signInCallback(authResult) {
       //contentType: 'application/octet-stream; charset=utf-8',
       success: function(result) {
         // Handle or verify the server response.
-    	  alert(result);
+    	 // alert(result);
     	  window.location.href = result;
       },
      // processData: false,

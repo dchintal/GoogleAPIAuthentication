@@ -114,7 +114,7 @@ public class LoginServlet extends HttpServlet {
 			System.out.println("familyName: " + familyName);
 			System.out.println("givenName: " + givenName);
 			
-			out.write("/GoogleAPIAuthentication/helloWorld.do");
+			out.write("helloWorld.do");
 			out.close();
 
 	}
