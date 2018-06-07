@@ -32,28 +32,17 @@ public class AuthenticateFilter implements Filter{
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
-	// Get the IP address of client machine.
-      String ipAddress = request.getRemoteAddr();
-      
+	 
       HttpServletRequest httpRequest = (HttpServletRequest) request;
-      
-      
+       
       String path = ((HttpServletRequest) request).getRequestURI();
-     
-      
-      if (httpRequest.getHeader("X-Requested-With") == null) {
-		  // Without the `X-Requested-With` header, this request could be forged. Aborts.
-		}
-
+    
 		// Set path to the Web application client_secret_*.json file you downloaded from the
 		// Google API Console: https://console.developers.google.com/apis/credentials
 		// You can also find your Web application client ID and client secret from the
 		// console and specify them directly when you create the GoogleAuthorizationCodeTokenRequest
 		// object.
 	
-	    String modeofAction = httpRequest.getParameter("modeofAction");
-	   
-	    System.out.println("modeofAction: " + modeofAction);
 		String CLIENT_SECRET_FILE = httpRequest.getServletContext().getRealPath("/credentials.json");
 
 		String authCode = httpRequest.getParameter("authCode"); 
@@ -108,10 +97,7 @@ public class AuthenticateFilter implements Filter{
 			System.out.println("locale: " + locale);
 			System.out.println("familyName: " + familyName);
 			System.out.println("givenName: " + givenName);
-			
-		 // Log the IP address and current timestamp.
-	      System.out.println("IP "+ ipAddress + ", Time " + new Date().toString());
-
+		
 	      // Pass request back down the filter chain
 	      chain.doFilter(request, response);
 		} else {
