@@ -8,16 +8,16 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import com.optum.pic.test.authenticate.common.form.HelloWorldForm;
+import com.optum.pic.test.authenticate.common.form.WelcomeForm;
 
 
 
-public class HelloWorldAction extends Action{
+public class WelcomeAction extends Action{
 	
 	public ActionForward execute(ActionMapping mapping,ActionForm form,
 			HttpServletRequest request,HttpServletResponse response) throws Exception {
 		
-		HelloWorldForm helloWorldForm = (HelloWorldForm) form;
+		WelcomeForm helloWorldForm = (WelcomeForm) form;
 		helloWorldForm.setMessage("Getting and integerated into Struts world");
 		
 		return mapping.findForward("success");

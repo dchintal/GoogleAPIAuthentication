@@ -6,15 +6,15 @@
 <struts-config>
 
 	<form-beans>
-		<form-bean name="helloWorldForm" 
-			type="com.optum.pic.test.authenticate.common.form.HelloWorldForm"/>
+		<form-bean name="welcomeForm" 
+			type="com.optum.pic.test.authenticate.common.form.WelcomeForm"/>
 	</form-beans>
 
 	<action-mappings>
-		<action path="/helloWorld"
-			type="com.optum.pic.test.authenticate.common.action.HelloWorldAction"
-			name="helloWorldForm">
-			<forward name="success" path="/HelloWorld.jsp"/>
+		<action path="/welcomeHome"
+			type="com.optum.pic.test.authenticate.common.action.WelcomeAction"
+			name="welcomeForm">
+			<forward name="success" path="/WelcomeHome.jsp"/>
 			
 		</action>
 	</action-mappings>

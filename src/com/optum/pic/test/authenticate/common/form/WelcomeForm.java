@@ -2,7 +2,7 @@ package com.optum.pic.test.authenticate.common.form;
 
 import org.apache.struts.action.ActionForm;
 
-public class HelloWorldForm extends ActionForm{
+public class WelcomeForm extends ActionForm{
 	
 	String message;
 
