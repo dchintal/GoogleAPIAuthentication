@@ -15,7 +15,12 @@
 			type="com.optum.pic.test.authenticate.common.action.WelcomeAction"
 			name="welcomeForm">
 			<forward name="success" path="/WelcomeHome.jsp"/>
-			
+		</action>
+		
+		<action path="/addOnDetails"
+			type="com.optum.pic.test.authenticate.common.action.AddonDetailsAction"
+			name="welcomeForm">
+			<forward name="addOnDetails" path="/AddOnDetails.jsp"/>
 		</action>
 	</action-mappings>
 

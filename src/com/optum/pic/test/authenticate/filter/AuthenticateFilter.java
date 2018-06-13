@@ -16,10 +16,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
+import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.services.oauth2.Oauth2;
+import com.google.api.services.oauth2.model.Tokeninfo;
 
 public class AuthenticateFilter implements Filter{
 
@@ -72,8 +76,7 @@ public class AuthenticateFilter implements Filter{
 			String accessToken = tokenResponse.getAccessToken();
 			System.out.println("accessToken: " + accessToken);
 			response.setContentType("text/html");
-		    PrintWriter out = response.getWriter();
-		    
+		 
 		    // Get profile info from ID token
 			GoogleIdToken idToken = tokenResponse.parseIdToken();
 			GoogleIdToken.Payload payload = idToken.getPayload();
@@ -85,10 +88,16 @@ public class AuthenticateFilter implements Filter{
 			String pictureUrl = (String) payload.get("picture");
 			String locale = (String) payload.get("locale");
 			String familyName = (String) payload.get("family_name");
-			String givenName = (String) payload.get("given_name");
-			
+			String givenName = (String) payload.get("given_name");	
 			System.out.println("payload: " + payload);
 			
+			if (tokenResponse.getIdToken() != null) {		
+			  System.out.println( "Id Token Provided is Valid -- > "  + validateIdToken(tokenResponse.getIdToken()) );
+	        }
+			
+			if (accessToken != null) {
+				System.out.println( "Access Token Provided is Valid -- > "  + validateAccessToken(accessToken) );
+		     }
 			
 			System.out.println("email: " + email);
 			System.out.println("emailVerified: " + emailVerified);
@@ -111,6 +120,59 @@ public class AuthenticateFilter implements Filter{
 		}
 	
 	}
+	
+	 private static final HttpTransport TRANSPORT = new NetHttpTransport();
+     
+	  private static final JacksonFactory JSON_FACTORY = new JacksonFactory();
+	  
+	  private static final String CLIENT_ID = "554083208552-5jb4dno6hcd4hb5itphg7qai626a5t4u.apps.googleusercontent.com";
+	  
+	  // Check that the Id Token is valid.
+	 private boolean validateIdToken(String idToken){ 
+		 if (idToken != null) {		
+			 ValidateIdToken checker = new ValidateIdToken(new String[]{CLIENT_ID}, CLIENT_ID);
+	          GoogleIdToken.Payload jwt = checker.check(idToken);
+	          if (jwt == null) {
+	        	  System.out.println("Invalid ID Token.");
+	        	  return false;
+	          } else {
+	            System.out.println("ID Token is valid.");
+	            return true;
+	          }
+	        } else {
+	        	 System.out.println("ID Token not provided");
+	        	 return false;
+	        }		
+	 }
+	 
+	 // Check that the Access Token is valid.
+     private boolean validateAccessToken(String accessToken){	 
+    	 if (accessToken != null) {
+          try {
+            GoogleCredential credential = new GoogleCredential().setAccessToken(accessToken);
+            Oauth2 oauth2 = new Oauth2.Builder(
+                TRANSPORT, JSON_FACTORY, credential).build();
+            Tokeninfo tokenInfo = oauth2.tokeninfo()
+                .setAccessToken(accessToken).execute();
+            System.out.println(tokenInfo.getIssuedTo());
+            if (!tokenInfo.getIssuedTo().equals(CLIENT_ID)) {
+              // This is not meant for this app. It is VERY important to check
+              // the client ID in order to prevent man-in-the-middle attacks.
+            	System.out.println("Access Token not meant for this app.");
+            	 return false;
+            } else {
+            	System.out.println("Access Token is valid.");
+            	 return true;
+            }
+          } catch (IOException e) {
+        	  System.out.println("Invalid Access Token.");
+        	  return false;
+          }
+        } else {
+        	System.out.println("Access Token not provided");
+        	 return false;
+        }
+	 }
 
 	@Override
 	public void init(FilterConfig config) throws ServletException {
