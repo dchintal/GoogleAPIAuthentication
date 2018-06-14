@@ -2,8 +2,6 @@ package com.optum.pic.test.authenticate.filter;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Date;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -12,7 +10,6 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
@@ -22,6 +19,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.util.Clock;
 import com.google.api.services.oauth2.Oauth2;
 import com.google.api.services.oauth2.model.Tokeninfo;
 
@@ -51,9 +49,7 @@ public class AuthenticateFilter implements Filter{
 
 		String authCode = httpRequest.getParameter("authCode"); 
 		System.out.println("authCode: " + authCode);
-		
-		if(authCode != null) {
-			
+			if(authCode != null) {
 			//System.out.println(authCode);
 			// Exchange auth code for access token
 			GoogleClientSecrets clientSecrets =
@@ -91,12 +87,19 @@ public class AuthenticateFilter implements Filter{
 			String givenName = (String) payload.get("given_name");	
 			System.out.println("payload: " + payload);
 			
+			System.out.println("tokenResponse: " + tokenResponse.getExpiresInSeconds());
+			
 			if (tokenResponse.getIdToken() != null) {		
 			  System.out.println( "Id Token Provided is Valid -- > "  + validateIdToken(tokenResponse.getIdToken()) );
 	        }
 			
 			if (accessToken != null) {
-				System.out.println( "Access Token Provided is Valid -- > "  + validateAccessToken(accessToken) );
+				try {
+					System.out.println( "Access Token Provided is Valid -- > "  + validateAccessToken(accessToken) );
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 		     }
 			
 			System.out.println("email: " + email);
@@ -106,19 +109,9 @@ public class AuthenticateFilter implements Filter{
 			System.out.println("locale: " + locale);
 			System.out.println("familyName: " + familyName);
 			System.out.println("givenName: " + givenName);
-		
+			}
 	      // Pass request back down the filter chain
 	      chain.doFilter(request, response);
-		} else {
-			 System.out.println("path: " + path);
-		      if (path.contains("/SignIn.jsp")) {
-		          chain.doFilter(request, response); // Just continue chain.
-		      } else {
-		    	  HttpServletResponse httpResponse = (HttpServletResponse) response;
-		  		 httpResponse.sendRedirect("SignIn.jsp");;  
-		      }
-		}
-	
 	}
 	
 	 private static final HttpTransport TRANSPORT = new NetHttpTransport();
@@ -146,7 +139,7 @@ public class AuthenticateFilter implements Filter{
 	 }
 	 
 	 // Check that the Access Token is valid.
-     private boolean validateAccessToken(String accessToken){	 
+     private boolean validateAccessToken(String accessToken) throws InterruptedException{	 
     	 if (accessToken != null) {
           try {
             GoogleCredential credential = new GoogleCredential().setAccessToken(accessToken);
@@ -154,6 +147,45 @@ public class AuthenticateFilter implements Filter{
                 TRANSPORT, JSON_FACTORY, credential).build();
             Tokeninfo tokenInfo = oauth2.tokeninfo()
                 .setAccessToken(accessToken).execute();
+            Thread.sleep(100000);
+            oauth2 = new Oauth2.Builder(
+                TRANSPORT, JSON_FACTORY, credential).build();
+            tokenInfo = oauth2.tokeninfo()
+                .setAccessToken(accessToken).execute();
+            System.out.println("Expires in ---> "+ tokenInfo.getExpiresIn() + " Access Token --> " + credential.getAccessToken());
+            
+            
+            Thread.sleep(100000);
+            oauth2 = new Oauth2.Builder(
+                    TRANSPORT, JSON_FACTORY, credential).build();
+                tokenInfo = oauth2.tokeninfo()
+                    .setAccessToken(accessToken).execute();
+         
+            System.out.println("Expires in ---> "+  tokenInfo.getExpiresIn() + " Access Token --> " + credential.getAccessToken());
+            
+            Thread.sleep(100000);
+            oauth2 = new Oauth2.Builder(
+                    TRANSPORT, JSON_FACTORY, credential).build();
+                tokenInfo = oauth2.tokeninfo()
+                    .setAccessToken(accessToken).execute();
+  
+            System.out.println("Expires in ---> "+ tokenInfo.getExpiresIn()+ " Access Token --> " + credential.getAccessToken());
+            
+            Thread.sleep(100000);
+            oauth2 = new Oauth2.Builder(
+                    TRANSPORT, JSON_FACTORY, credential).build();
+                tokenInfo = oauth2.tokeninfo()
+                    .setAccessToken(accessToken).execute();
+           System.out.println("Expires in ---> "+ tokenInfo.getExpiresIn() + " Access Token --> " + credential.getAccessToken());
+            
+            Thread.sleep(100000);
+            oauth2 = new Oauth2.Builder(
+                    TRANSPORT, JSON_FACTORY, credential).build();
+                tokenInfo = oauth2.tokeninfo()
+                    .setAccessToken(accessToken).execute();
+          
+            System.out.println("Expires in ---> "+ tokenInfo.getExpiresIn() + " Access Token --> " + credential.getAccessToken());
+            
             System.out.println(tokenInfo.getIssuedTo());
             if (!tokenInfo.getIssuedTo().equals(CLIENT_ID)) {
               // This is not meant for this app. It is VERY important to check
