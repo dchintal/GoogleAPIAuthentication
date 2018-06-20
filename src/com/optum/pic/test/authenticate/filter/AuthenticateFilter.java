@@ -19,7 +19,6 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.client.util.Clock;
 import com.google.api.services.oauth2.Oauth2;
 import com.google.api.services.oauth2.model.Tokeninfo;
 
@@ -147,14 +146,14 @@ public class AuthenticateFilter implements Filter{
                 TRANSPORT, JSON_FACTORY, credential).build();
             Tokeninfo tokenInfo = oauth2.tokeninfo()
                 .setAccessToken(accessToken).execute();
-            Thread.sleep(100000);
+            Thread.sleep(4000);
             oauth2 = new Oauth2.Builder(
                 TRANSPORT, JSON_FACTORY, credential).build();
             tokenInfo = oauth2.tokeninfo()
                 .setAccessToken(accessToken).execute();
             System.out.println("Expires in ---> "+ tokenInfo.getExpiresIn() + " Access Token --> " + credential.getAccessToken());
             
-            
+           /* 
             Thread.sleep(100000);
             oauth2 = new Oauth2.Builder(
                     TRANSPORT, JSON_FACTORY, credential).build();
@@ -185,7 +184,7 @@ public class AuthenticateFilter implements Filter{
                     .setAccessToken(accessToken).execute();
           
             System.out.println("Expires in ---> "+ tokenInfo.getExpiresIn() + " Access Token --> " + credential.getAccessToken());
-            
+            */
             System.out.println(tokenInfo.getIssuedTo());
             if (!tokenInfo.getIssuedTo().equals(CLIENT_ID)) {
               // This is not meant for this app. It is VERY important to check
