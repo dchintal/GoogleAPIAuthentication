@@ -47,7 +47,7 @@ public class AuthenticateFilter implements Filter{
 		String CLIENT_SECRET_FILE = httpRequest.getServletContext().getRealPath("/credentials.json");
 
 		String authCode = httpRequest.getParameter("authCode"); 
-		System.out.println("authCode: " + authCode);
+		
 			if(authCode != null) {
 			//System.out.println(authCode);
 			// Exchange auth code for access token
@@ -66,6 +66,9 @@ public class AuthenticateFilter implements Filter{
 			                             // app. If you don't have a web version of your app, you can
 			                             // specify an empty string.
 			              .execute();
+			System.out.println("authCode: " + authCode);
+			
+			System.out.println("Using AuthCode Fetching Access Token and User Info");
 			
 			//GET ACCESSTOKEN
 			String accessToken = tokenResponse.getAccessToken();
@@ -84,14 +87,16 @@ public class AuthenticateFilter implements Filter{
 			String locale = (String) payload.get("locale");
 			String familyName = (String) payload.get("family_name");
 			String givenName = (String) payload.get("given_name");	
-			System.out.println("payload: " + payload);
 			
 			System.out.println("tokenResponse: " + tokenResponse.getExpiresInSeconds());
+		
+			System.out.println("");
 			
 			if (tokenResponse.getIdToken() != null) {		
 			  System.out.println( "Id Token Provided is Valid -- > "  + validateIdToken(tokenResponse.getIdToken()) );
 	        }
 			
+			System.out.println("");
 			if (accessToken != null) {
 				try {
 					System.out.println( "Access Token Provided is Valid -- > "  + validateAccessToken(accessToken) );
@@ -101,13 +106,14 @@ public class AuthenticateFilter implements Filter{
 				}
 		     }
 			
-			System.out.println("email: " + email);
+			System.out.println("");
+			System.out.println("+++++++++++++++++++++++ Profile Info +++++++++++++++++++++++");
 			System.out.println("emailVerified: " + emailVerified);
 			System.out.println("name: " + name);
-			System.out.println("pictureUrl: " + pictureUrl);
 			System.out.println("locale: " + locale);
 			System.out.println("familyName: " + familyName);
 			System.out.println("givenName: " + givenName);
+			System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++");
 			}
 	      // Pass request back down the filter chain
 	      chain.doFilter(request, response);
@@ -124,15 +130,12 @@ public class AuthenticateFilter implements Filter{
 		 if (idToken != null) {		
 			 ValidateIdToken checker = new ValidateIdToken(new String[]{CLIENT_ID}, CLIENT_ID);
 	          GoogleIdToken.Payload jwt = checker.check(idToken);
-	          if (jwt == null) {
-	        	  System.out.println("Invalid ID Token.");
+	          if (jwt == null) {	 
 	        	  return false;
 	          } else {
-	            System.out.println("ID Token is valid.");
 	            return true;
 	          }
 	        } else {
-	        	 System.out.println("ID Token not provided");
 	        	 return false;
 	        }		
 	 }
@@ -185,22 +188,17 @@ public class AuthenticateFilter implements Filter{
           
             System.out.println("Expires in ---> "+ tokenInfo.getExpiresIn() + " Access Token --> " + credential.getAccessToken());
             */
-            System.out.println(tokenInfo.getIssuedTo());
             if (!tokenInfo.getIssuedTo().equals(CLIENT_ID)) {
               // This is not meant for this app. It is VERY important to check
               // the client ID in order to prevent man-in-the-middle attacks.
-            	System.out.println("Access Token not meant for this app.");
             	 return false;
             } else {
-            	System.out.println("Access Token is valid.");
             	 return true;
             }
           } catch (IOException e) {
-        	  System.out.println("Invalid Access Token.");
         	  return false;
           }
         } else {
-        	System.out.println("Access Token not provided");
         	 return false;
         }
 	 }

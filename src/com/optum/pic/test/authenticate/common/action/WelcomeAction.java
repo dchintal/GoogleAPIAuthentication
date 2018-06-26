@@ -20,9 +20,9 @@ public class WelcomeAction extends Action{
 		WelcomeForm helloWorldForm = (WelcomeForm) form;
 		helloWorldForm.setMessage("Getting and integerated into Struts world");
 		
-		System.out.println("welcome action: ");
+		//System.out.println("welcome action: ");
 		
-		System.out.println("Auth Code:- " + helloWorldForm.getAuthCode());
+		//System.out.println("Auth Code:- " + helloWorldForm.getAuthCode());
 		
 		return mapping.findForward("success");
 	
