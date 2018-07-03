@@ -61,13 +61,15 @@ public class ValidateIdToken {
         return payload;
     }
     
-    private void verifyJwtSignatureAndUpdateResult(Map<String, String> result, String id_token, String secret) {
+    // Introduce id signature verify sample code from OptumID team.
+    public void verifyJwtSignatureAndUpdateResult(Map<String, String> result, String id_token, String secret) {
     	String decoded_header = null;
     	String decoded_payload = null;
-    	String sign_verification_status = null;
+    	String sign_verification_status = "error";
 
-
-    	try {
+    	try {    		
+    		//RSAPublicKey publicKey = null; --need to add other algorithms to validate google id tokens (different alg)
+    		//System.out.println("See ID token and check its alg: "+id_token);
     		String[] parts = CompactSerializer.deserialize(id_token);
     		Validate.isTrue(parts.length == 3);
     		Base64Url base64url = new Base64Url();

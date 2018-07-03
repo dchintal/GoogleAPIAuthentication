@@ -2,6 +2,7 @@ package com.optum.pic.test.authenticate.filter;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -129,16 +130,19 @@ public class AuthenticateFilter implements Filter{
 	 private boolean validateIdToken(String idToken){ 
 		 if (idToken != null) {		
 			 ValidateIdToken checker = new ValidateIdToken(new String[]{CLIENT_ID}, CLIENT_ID);
-	          GoogleIdToken.Payload jwt = checker.check(idToken);
-	          if (jwt == null) {	 
-	        	  return false;
-	          } else {
-	            return true;
-	          }
-	        } else {
-	        	 return false;
-	        }		
-	 }
+	          GoogleIdToken.Payload jwt = checker.check(idToken); 
+ 			 //use Optum team provided verifyJwtSignatureAndUpdateResult sample code
+ 			 HashMap<String, String> result = new HashMap<String, String>();			 
+ 			 checker.verifyJwtSignatureAndUpdateResult(result, idToken, "Cybx4hJYTx_V_kpNK1AHkAdD");
+ 			 //System.out.println("signature verify " + result.get("sign_verification_status"));
+ 			 if( !result.get("sign_verification_status").equals("Error")) {
+ 				if (jwt != null) {	 
+ 		        	  return true;
+ 		          } 
+ 			}  	 
+	     }
+	   return false;	 
+	 }	 
 	 
 	 // Check that the Access Token is valid.
      private boolean validateAccessToken(String accessToken) throws InterruptedException{	 
